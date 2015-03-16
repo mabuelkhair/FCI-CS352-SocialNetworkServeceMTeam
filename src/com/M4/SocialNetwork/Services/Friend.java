@@ -1,8 +1,10 @@
 package com.M4.SocialNetwork.Services;
 
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.json.simple.JSONObject;
 
@@ -50,5 +52,20 @@ public class Friend {
 		}
 
 		return json.toString();
+	} 
+	
+	@GET
+	@Path("/SearchFriend/{email}")
+	public String searchFriend(@PathParam("email") String email){
+		System.out.println(email);
+		UserController controller = new UserController() ;
+		JSONObject json = new JSONObject() ;
+		if(controller.emailExist(email)){
+			json.put("Status", "Exist") ;
+		}else{
+			json.put("Status", "Not Exist") ;
+		}
+		
+		return json.toString() ;
 	}
 }
