@@ -1,4 +1,4 @@
-package com.M4.SocialNetwork.Services;
+package com.m4.socialnetwork.services;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -6,9 +6,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
-import com.M4.SocialNetwork.Model.Controllers.UserController;
+import com.m4.socialnetwork.model.controllers.UserController;
+import com.m4.socialnetwork.model.javabeans.User;
 
 @Path("/FriendService")
 public class Friend {
@@ -21,6 +22,7 @@ public class Friend {
 
 		UserController userController = new UserController();
 		JSONObject json = new JSONObject();
+		try{
 		if (userController.getUser(sender, password) != null
 				&& userController.sendFriedRequest(sender, reception)) {
 			json.put("Status", "OK");
@@ -28,6 +30,7 @@ public class Friend {
 		} else {
 			json.put("Status", "failed");
 		}
+		}catch(Exception e){} ;
 
 		return json.toString();
 	}
@@ -42,6 +45,7 @@ public class Friend {
 		System.out.println(receptionEmail + " " + receptionPassword + " " + senderEmail) ;
 		UserController controller = new UserController();
 		JSONObject json = new JSONObject();
+		try{
 		if (controller.getUser(receptionEmail, receptionPassword) != null
 				&& controller.requestExistBefore(senderEmail, receptionEmail)
 				&& controller.acceptFriendRequest(senderEmail,
@@ -50,7 +54,7 @@ public class Friend {
 		} else {
 			json.put("Status", "failed");
 		}
-
+		}catch(Exception e){}
 		return json.toString();
 	} 
 	
@@ -60,12 +64,27 @@ public class Friend {
 		System.out.println(email);
 		UserController controller = new UserController() ;
 		JSONObject json = new JSONObject() ;
-		if(controller.emailExist(email)){
+		try{
+		if(controller.getUser(email)!=null){
 			json.put("Status", "Exist") ;
 		}else{
 			json.put("Status", "Not Exist") ;
 		}
+		}catch(Exception e){} 
 		
 		return json.toString() ;
 	}
+	@POST
+	@Path("/test")
+	public String getUserId(@FormParam("ID") String id){
+		
+		User user = new UserController().getUserById(id) ;
+		
+		if(user!=null){
+			return user.toString() ;
+		}
+		return id ;
+		
+	}
+	
 }

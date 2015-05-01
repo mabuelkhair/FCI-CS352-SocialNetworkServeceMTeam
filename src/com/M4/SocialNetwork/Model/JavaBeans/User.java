@@ -1,4 +1,4 @@
-package com.M4.SocialNetwork.Model.JavaBeans;
+package com.m4.socialnetwork.model.javabeans;
 
 
 
@@ -8,24 +8,34 @@ public class User {
 	private String userName ;
 	private String email ;
 	private String password ;
+	private boolean active ;
 	
-	
+
 	
 
 
-	public User(String userName, String email, String password) {
-		super();
-		this.userName = userName;
-		this.email = email;
-		this.password = password;
-	}
-	public User(String id, String userName, String email, String password) {
+	public User(String id, String userName, String email, String password,
+			boolean active) {
 		super();
 		this.id = id;
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
+		this.active = active;
 	}
+	
+	
+	
+	public User(String userName, String email, String password, boolean active) {
+		super();
+		this.userName = userName;
+		this.email = email;
+		this.password = password;
+		this.active = active;
+	}
+
+
+
 	public String getId() {
 		return id;
 	}
@@ -50,6 +60,20 @@ public class User {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", userName=" + userName + ", email=" + email
+				+ ", password=" + password + ", active=" + active + "]";
 	}
 	
 	
