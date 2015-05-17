@@ -28,8 +28,10 @@ import com.m4.socialnetwork.model.javabeans.UserPost;
 public class Post {
 	@POST
 	@Path("/CreatePagePost")
-	public String createPagePost(String pageId, String creatorId,
-			String postContent, String privacy) {
+	public String createPagePost(@FormParam("pageId") String pageId,
+			@FormParam("creatorId") String creatorId,
+			@FormParam("postContent") String postContent,
+			@FormParam("privacy") String privacy) {
 		Gson gson = new Gson();
 		BufferedReader br;
 		br = new BufferedReader(new StringReader(privacy));
@@ -99,6 +101,30 @@ public class Post {
 		Gson gson = new Gson();
 		try {
 			jsonObject.put("timeline", gson.toJson(posts));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@POST
+	@Path("/LikePost")
+	public void likePost(@FormParam("userId") String userId,
+			@FormParam("postId") String postId) {
+		new PostController().likePost(postId, userId);
+	}
+
+	@POST
+	@Path("/SearchPostsByHashTag")
+	public String SearchPostsByHashTag(@FormParam("hashTag") String hashTag) {
+		ArrayList<com.m4.socialnetwork.model.javabeans.Post> posts = new PostController()
+				.searchPostsByHashTag(hashTag);
+		JSONObject jsonObject = new JSONObject();
+		Gson gson = new Gson();
+		try {
+			jsonObject.put("hashTag", gson.toJson(posts));
+			return jsonObject.toString();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

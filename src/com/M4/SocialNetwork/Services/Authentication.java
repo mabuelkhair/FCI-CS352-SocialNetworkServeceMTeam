@@ -10,7 +10,6 @@ import javax.ws.rs.Produces;
 
 import org.json.JSONObject;
 
-import sun.org.mozilla.javascript.internal.EcmaError;
 
 @Path("/AuthenticationService")
 @Produces("text/html")

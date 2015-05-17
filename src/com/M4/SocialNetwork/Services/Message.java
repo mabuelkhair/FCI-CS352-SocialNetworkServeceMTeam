@@ -103,6 +103,7 @@ public class Message {
 		JSONObject jsonObject = new JSONObject();
 		Gson gson = new Gson();
 		try {
+			jsonObject.put("Status", "OK");
 			jsonObject.put("conversation", gson.toJson(conversation));
 			return jsonObject.toString();
 		} catch (JSONException e) {
@@ -128,6 +129,22 @@ public class Message {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	@POST
+	@Path("/UserConversationsIndividuals")
+	public String userConversationIndividuals(@FormParam("userId") String userId){
+		ArrayList<Conversation> userConversations = new MessageController().getUserConversationIndividuals(userId) ;
+		JSONObject jsonObject = new JSONObject() ;
+		Gson gson = new Gson() ;
+		try {
+			jsonObject.put("Status", "OK");
+			jsonObject.put("userConversations", gson.toJson(userConversations)) ;
+			return jsonObject.toString() ;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null ;
 	}
 
 }

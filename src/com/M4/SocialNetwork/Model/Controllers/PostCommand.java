@@ -25,9 +25,8 @@ public abstract class PostCommand {
 							postEntity.getProperty("creatorId").toString())
 					.setPostId(postEntity.getProperty("postId").toString())
 					.setPrivacy((Privacy) postEntity.getProperty("privacy"))
-					.setNumOfLikers(
-							Integer.parseInt(postEntity.getProperty(
-									"numOfLikers").toString())).build();
+					.setLikers(new PostController().getPostLikes(postId))
+					.build();
 		} catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

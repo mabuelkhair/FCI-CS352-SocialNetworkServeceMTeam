@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
+
 import org.apache.jsp.ah.datastoreViewerFinal_jsp;
 
 import com.google.api.server.spi.response.ForbiddenException;
@@ -23,10 +25,28 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.m4.socialnetwork.model.javabeans.PagePost;
 import com.m4.socialnetwork.model.javabeans.Post;
 import com.m4.socialnetwork.model.javabeans.Privacy;
+import com.m4.socialnetwork.model.javabeans.User;
 import com.m4.socialnetwork.model.javabeans.UserPost;
 import com.m4.socialnetwork.model.javabeans.UserPost.UserPostBuilder;
 
 public class PostController {
+	public ArrayList<User> getPostLikes(String postId) {
+		DatastoreService dataStore = DatastoreServiceFactory
+				.getDatastoreService();
+		Filter pageLikerFilter = new FilterPredicate("postId",
+				FilterOperator.EQUAL, postId);
+		Query pageLikerQuery = new Query("POST_LIKER")
+				.setFilter(pageLikerFilter);
+		PreparedQuery pq = dataStore.prepare(pageLikerQuery);
+		UserController controller = new UserController();
+		ArrayList<User> Likers = new ArrayList<User>();
+		for (Entity liker : pq.asIterable()) {
+			Likers.add(controller.getUserById(liker.getProperty("userId")
+					.toString()));
+		}
+		return Likers;
+	}
+
 	public void likePost(String postId, String userId) {
 		DatastoreService dataStore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -56,18 +76,45 @@ public class PostController {
 		}
 	}
 
+	public ArrayList<Post> searchPostsByHashTag(String hashTag) {
+		DatastoreService dataStore = DatastoreServiceFactory
+				.getDatastoreService();
+		Filter hashTageFilter = new FilterPredicate("hashTag",
+				FilterOperator.EQUAL, hashTag);
+		Query hashTageQuery = new Query("POST_HASHTAGS")
+				.setFilter(hashTageFilter);
+		PreparedQuery pq = dataStore.prepare(hashTageQuery);
+		ArrayList<Post> posts = new ArrayList<Post>();
+		for (Entity hashTagEntity : pq.asIterable()) {
+			posts.add(getPost(hashTagEntity.getProperty("postId").toString()));
+		}
+
+		return posts;
+	}
+
+	private void putPostHashTags(String hashTag, String postId) {
+		DatastoreService dataStore = DatastoreServiceFactory
+				.getDatastoreService();
+		Entity hashTageEntity = new Entity("POST_HASHTAGS");
+		hashTageEntity.setProperty("postId", postId);
+		hashTageEntity.setProperty("hashTag", hashTag);
+		dataStore.put(hashTageEntity);
+	}
+
 	private void createPost(Post post, String postType) {
 		DatastoreService dataStore = DatastoreServiceFactory
 				.getDatastoreService();
 		Entity postEntity = new Entity("POST");
 		postEntity.setProperty("creatorId", post.getCreatorId());
 		postEntity.setProperty("privacy", post.getPrivacy());
-		postEntity.setProperty("numOfLikers", post.getNumOfLikers());
 		postEntity.setProperty("content", post.getContent());
+		String[] hashTags = post.getContent().split("#");
 		postEntity.setProperty("postType", postType);
 		dataStore.put(postEntity);
 		post.setPostId(String.valueOf(postEntity.getKey().getId()));
 		post.getPrivacy().notifyUsers();
+		for (int i = 1; i < hashTags.length; i++)
+			putPostHashTags(hashTags[i], post.getPostId());
 	}
 
 	public PagePost createPagePost(PagePost pagePost) {
@@ -160,14 +207,15 @@ public class PostController {
 
 		return posts;
 	}
-	public ArrayList<Post> getUserTimline(String userId){
-		ArrayList<Post> posts = getUserProfilePosts(userId) ;
-		ArrayList<String> pagesUserId = new PageController().getPagesOFUser(userId) ;
-		for(int i=0 ; i<pagesUserId.size() ; i++){
-			   posts.addAll(getPagePosts(pagesUserId.get(i))) ;
+
+	public ArrayList<Post> getUserTimline(String userId) {
+		ArrayList<Post> posts = getUserProfilePosts(userId);
+		ArrayList<String> pagesUserId = new PageController()
+				.getPagesOFUser(userId);
+		for (int i = 0; i < pagesUserId.size(); i++) {
+			posts.addAll(getPagePosts(pagesUserId.get(i)));
 		}
-		return posts ;
+		return posts;
 	}
-	
 
 }

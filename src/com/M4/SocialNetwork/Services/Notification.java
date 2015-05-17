@@ -57,7 +57,8 @@ public class Notification {
 			}
 		} else {
 			try {
-				jsonObject.put("status", "faild");
+				//here
+				jsonObject.put("Status", "faild");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

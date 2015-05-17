@@ -3,6 +3,9 @@ package com.m4.socialnetwork.model.controllers;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -165,6 +168,27 @@ public class MessageController {
 
 		return new Conversation(users.get(0), users.get(1), messages);
 	}
+	
+	public ArrayList<Conversation> getUserConversationIndividuals(String userId){
+		DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService() ;
+		Filter user1Filter = new FilterPredicate("userOne" , FilterOperator.EQUAL , userId) ;
+		Filter user2Filter = new FilterPredicate("userTwo" , FilterOperator.EQUAL , userId) ;
+		Filter compositeFilter = CompositeFilterOperator.or(user1Filter , user2Filter) ;
+		Query conversation = new Query("CONVERSATION").setFilter(compositeFilter) ;
+		Set<String> conversationId = new HashSet<String>() ;
+		PreparedQuery pq = dataStore.prepare(conversation) ;
+		for(Entity conversationEntity: pq.asIterable()){
+			    conversationId.add(String.valueOf(conversationEntity.getKey().getId())) ;
+		}
+		Iterator it = conversationId.iterator() ;
+		ArrayList<Conversation> conversations = new ArrayList<Conversation>() ;
+		while(it.hasNext()){
+			conversations.add(getConversation((String)it.next())) ;
+		}
+		
+		return conversations ;
+	}
+	
 
 	public String insertConversationGroup(String creatorId, String chatName) {
 		DatastoreService dataStore = DatastoreServiceFactory
@@ -336,5 +360,6 @@ public class MessageController {
 		return null ;
 		
 	}
+	
 
 }

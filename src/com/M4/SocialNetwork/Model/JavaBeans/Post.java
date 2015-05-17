@@ -1,32 +1,34 @@
 package com.m4.socialnetwork.model.javabeans;
 
+import java.util.ArrayList;
+
 import com.m4.socialnetwork.model.controllers.PostCommand;
 
-public  class Post {
+public class Post {
 	protected String postId;
 	protected String content;
 	protected String creatorId;
 	protected Privacy privacy;
-	protected int numOfLikers;
+	protected ArrayList<User> Likers;
 
 	public static class PostBuilder {
 		protected String postId;
 		protected String content;
 		protected String creatorId;
 		protected Privacy privacy;
-		protected int numOfLikers;
+		protected ArrayList<User> Likers;
 
 		public PostBuilder setPost(Post post) {
 			postId = post.postId;
 			content = post.content;
 			creatorId = post.creatorId;
 			privacy = post.privacy;
-			numOfLikers = post.numOfLikers;
+			Likers = post.Likers;
 			return this;
 		}
 
-		public PostBuilder setNumOfLikers(int numOfLikers) {
-			this.numOfLikers = numOfLikers;
+		public PostBuilder setLikers(ArrayList<User> numOfLikers) {
+			this.Likers = numOfLikers;
 			return this;
 		}
 
@@ -61,7 +63,7 @@ public  class Post {
 		content = builder.content;
 		creatorId = builder.creatorId;
 		privacy = builder.privacy;
-		numOfLikers = builder.numOfLikers;
+		Likers = builder.Likers;
 	}
 
 	public String getPostId() {
@@ -96,12 +98,12 @@ public  class Post {
 		this.privacy = privacy;
 	}
 
-	public int getNumOfLikers() {
-		return numOfLikers;
+	public ArrayList<User> getLikers() {
+		return Likers;
 	}
 
-	public void setNumOfLikers(int numOfLikers) {
-		this.numOfLikers = numOfLikers;
+	public void setLikers(ArrayList<User> Likers) {
+		this.Likers = Likers;
 	}
 
 }
